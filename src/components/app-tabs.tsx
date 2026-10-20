@@ -1,5 +1,6 @@
 import { NativeTabs } from 'expo-router/native-tabs';
-import { useColorScheme } from 'react-native';
+import {Pressable, Text, useColorScheme} from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 import { Colors } from '@/constants/theme';
 
@@ -19,6 +20,11 @@ export default function AppTabs() {
           renderingMode="template"
         />
       </NativeTabs.Trigger>
+
+        {/*<Pressable*/}
+        {/*    onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>*/}
+        {/*    <Text>Tap me</Text>*/}
+        {/*</Pressable>*/}
 
       <NativeTabs.Trigger name="explore">
         <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
