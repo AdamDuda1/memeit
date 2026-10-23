@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import type { BottomTabBarButtonProps } from 'expo-router/js-tabs';
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -24,7 +25,10 @@ export function UploadButton(_props: BottomTabBarButtonProps) {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="New meme"
-        onPress={() => setOpen(true)}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setOpen(true);
+        }}
         style={({ pressed }) => [styles.fab, pressed && styles.pressed]}
         hitSlop={8}
       >

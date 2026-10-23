@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { Tabs } from 'expo-router/js-tabs';
 import type { ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,10 +8,9 @@ import { UploadButton } from '@/components/UploadButton';
 import { colors } from '@/theme';
 
 const tabIcon = (name: IconName) => {
-  const TabIcon = ({ color, focused }: { color: ColorValue; focused: boolean }) => (
-    <Icon name={name} color={String(color)} filled={focused} />
+    return ({color, focused}: { color: ColorValue; focused: boolean }) => (
+      <Icon name={name} color={String(color)} filled={focused}/>
   );
-  return TabIcon;
 };
 
 export default function TabsLayout() {
@@ -18,6 +18,7 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      screenListeners={{ tabPress: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light) }}
       screenOptions={{
         headerShown: false,
         sceneStyle: { backgroundColor: colors.bg },
