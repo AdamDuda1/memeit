@@ -17,3 +17,22 @@ export async function getPosts(cursor?: number): Promise<{ posts: Post[]; nextCu
   if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
   return res.json();
 }
+
+export async function uploadMeme(file: { uri: string; mimeType: string }, caption: string) {
+  const blob = await (await fetch(file.uri)).blob();
+  const up = await fetch(`${API_URL}/uploads`, {
+    method: 'PUT',
+    headers: { 'Content-Type': file.mimeType },
+    body: blob,
+  });
+  if (!up.ok) throw new Error(await up.text());
+  const { key } = await up.json();
+
+  const res = await fetch(`${API_URL}/posts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, caption }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<Post>;
+}

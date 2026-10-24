@@ -1,10 +1,12 @@
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 import type { BottomTabBarButtonProps } from 'expo-router/js-tabs';
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/Icon';
+import { pickImage } from '@/lib/image';
 import { colors } from '@/theme';
 
 const FAB_SIZE = 64;
@@ -13,8 +15,14 @@ export function UploadButton(_props: BottomTabBarButtonProps) {
   const [open, setOpen] = useState(false);
   const insets = useSafeAreaInsets();
 
-  // TODO: wire up once the new meme flow exists.
-  const choose = (_action: 'file' | 'create') => setOpen(false);
+  async function chooseFile() {
+    setOpen(false);
+    const uri = await pickImage();
+    if (uri) router.push({ pathname: '/upload', params: { uri } });
+  }
+
+  // TODO: "Create" (meme editor) comes later.
+  const create = () => setOpen(false);
 
   return (
     <>
@@ -34,10 +42,10 @@ export function UploadButton(_props: BottomTabBarButtonProps) {
       <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={[styles.backdrop, { paddingBottom: insets.bottom + 90 }]} onPress={() => setOpen(false)}>
           <View style={styles.menu}>
-            <Pressable onPress={() => choose('file')} style={[styles.option, styles.secondary]}>
+            <Pressable onPress={chooseFile} style={[styles.option, styles.secondary]}>
               <Text style={styles.secondaryText}>Choose a file</Text>
             </Pressable>
-            <Pressable onPress={() => choose('create')} style={[styles.option, styles.primary]}>
+            <Pressable onPress={create} style={[styles.option, styles.primary]}>
               <Text style={styles.primaryText}>Create</Text>
             </Pressable>
           </View>
@@ -56,12 +64,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    // lift it above the bar
     marginTop: -FAB_SIZE / 2,
-    // the dark "ring" that separates it from the bar
     borderWidth: 6,
     borderColor: colors.bg,
-    // shadow (iOS) / elevation (Android)
     shadowColor: '#000',
     shadowOpacity: 0.35,
     shadowRadius: 10,

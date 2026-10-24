@@ -7,7 +7,11 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
+        <Stack.Screen name="(tabs)" />
+        {/* opened from the + menu, slides up over the tabs */}
+        <Stack.Screen name="upload" options={{ presentation: 'modal' }} />
+      </Stack>
     </>
   );
 }

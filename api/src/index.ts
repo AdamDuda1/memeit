@@ -20,23 +20,25 @@ const currentUserId = () => 'demo';
 app.get('/', (c) => c.json({ ok: true, service: 'memes-api' }));
 
 /**
- * PUT /uploads  (body = raw image bytes, Content-Type = image/*)
- * Streams the image into R2 and returns its key.
+ * PUT /uploads  (body = raw image bytes)
+ * Checks it's really an image and stores it in R2. Returns its key.
  * Later you can swap this for presigned URLs so the bytes skip the Worker.
  */
 app.put('/uploads', async (c) => {
-  const type = c.req.header('content-type')?.split(';')[0] ?? '';
-  const ext = ALLOWED_TYPES[type];
-  if (!ext) return c.json({ error: 'Unsupported image type' }, 415);
+  const bytes = new Uint8Array(await c.req.arrayBuffer());
+  if (bytes.length === 0) return c.json({ error: 'Empty body' }, 400);
+  if (bytes.length > Number(c.env.MAX_UPLOAD_BYTES)) return c.json({ error: 'File too large' }, 413);
 
-  const size = Number(c.req.header('content-length') ?? 0);
-  if (size > Number(c.env.MAX_UPLOAD_BYTES)) return c.json({ error: 'File too large' }, 413);
+  // Phones don't always send the right Content-Type, so look at the file's
+  // first bytes ("magic numbers") to see what it really is.
+  const type = sniffImageType(bytes);
+  if (!type) {
+    console.log('rejected upload, content-type header was:', c.req.header('content-type'));
+    return c.json({ error: 'Unsupported image type' }, 415);
+  }
 
-  const body = c.req.raw.body;
-  if (!body) return c.json({ error: 'Empty body' }, 400);
-
-  const key = `memes/${crypto.randomUUID()}.${ext}`;
-  await c.env.BUCKET.put(key, body, { httpMetadata: { contentType: type } });
+  const key = `memes/${crypto.randomUUID()}.${ALLOWED_TYPES[type]}`;
+  await c.env.BUCKET.put(key, bytes, { httpMetadata: { contentType: type } });
   return c.json({ key }, 201);
 });
 
@@ -93,6 +95,15 @@ app.get('/images/*', async (c) => {
 });
 
 // ---------- helpers ----------
+
+function sniffImageType(b: Uint8Array): string | null {
+  const ascii = (from: number, to: number) => String.fromCharCode(...b.subarray(from, to));
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
+  if (b[0] === 0x89 && ascii(1, 4) === 'PNG') return 'image/png';
+  if (ascii(0, 4) === 'GIF8') return 'image/gif';
+  if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP') return 'image/webp';
+  return null;
+}
 
 type PostRow = {
   id: string;

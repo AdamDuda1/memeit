@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -48,9 +49,12 @@ export default function Feed() {
     fetchFeed().then(apply);
   }, [apply]);
 
-  useEffect(() => {
-    fetchFeed().then(apply);
-  }, [apply]);
+  // reload whenever this tab comes into view (e.g. after posting a meme)
+  useFocusEffect(
+    useCallback(() => {
+      fetchFeed().then(apply);
+    }, [apply]),
+  );
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
