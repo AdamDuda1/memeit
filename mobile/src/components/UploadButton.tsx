@@ -9,10 +9,6 @@ import { colors } from '@/theme';
 
 const FAB_SIZE = 64;
 
-/**
- * The raised yellow + in the middle of the tab bar. It replaces the default
- * tab button of the "create" tab and opens a small menu instead.
- */
 export function UploadButton(_props: BottomTabBarButtonProps) {
   const [open, setOpen] = useState(false);
   const insets = useSafeAreaInsets();

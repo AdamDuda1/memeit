@@ -2,7 +2,6 @@ import { Image } from 'expo-image';
 
 import { colors } from '@/theme';
 
-// Material Symbols from assets/icons. Pairs are [outline, filled].
 const icons = {
   home: [require('@/assets/icons/home.svg'), require('@/assets/icons/home_filled.svg')],
   explore: [require('@/assets/icons/explore.svg'), require('@/assets/icons/explore_filled.svg')],
