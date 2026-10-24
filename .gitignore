@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# env files (keep the *.example ones)
+.env
+.env.*
+!.env.example
+
+# Cloudflare local state (local D1/R2 data)
+.wrangler/
+.dev.vars*
+
+# Expo / native builds
+.expo/
+app/android/
+app/ios/
+
+# OS / editors
+.DS_Store
+.idea/workspace.xml
+.idea/shelf/

@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "memes-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+
+  // D1: SQLite database. Create the real one with: npx wrangler d1 create memes-db
+  // then paste the printed database_id here.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "memes-db",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // R2: file storage for the images. Create with: npx wrangler r2 bucket create memes-images
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "memes-images" }],
+
+  "vars": {
+    // Max upload size in bytes (10 MB)
+    "MAX_UPLOAD_BYTES": "10485760"
+  }
+}
