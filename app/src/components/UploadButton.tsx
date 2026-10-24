@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import type { BottomTabBarButtonProps } from 'expo-router/js-tabs';
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -12,6 +12,7 @@ import { colors } from '@/theme';
 const FAB_SIZE = 64;
 
 export function UploadButton(_props: BottomTabBarButtonProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const insets = useSafeAreaInsets();
 

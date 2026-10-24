@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import { colors, radius } from '@/theme';
 
 export default function Upload() {
   // The + menu passes the picked image in as ?uri=...
+  const router = useRouter();
   const params = useLocalSearchParams<{ uri?: string }>();
   const [image, setImage] = useState<string | null>(params.uri ?? null);
   const [caption, setCaption] = useState('');
